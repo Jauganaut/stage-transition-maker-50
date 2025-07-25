@@ -1,26 +1,11 @@
 # Cloudflare Pages Configuration
-# Deploy to Pages instead of Workers for better SPA support
-
 name = "stage-transition-maker"
 compatibility_date = "2024-01-15"
 
-# Pages configuration
-[site]
-bucket = "./dist"
+# Pages build output directory (required for Pages)
+pages_build_output_dir = "dist"
 
-# Custom domain configuration (update when ready)
-[[route]]
-pattern = "your-domain.com/*"
-zone_name = "your-domain.com"
-
-# Build configuration for Pages
+# Build configuration
 [build]
-command = "npm run build"
-publish = "./dist"
-
-# Security headers via Pages Functions
-[site.headers]
-"/*"."X-Frame-Options" = "DENY"
-"/*"."X-Content-Type-Options" = "nosniff"
-"/*"."Referrer-Policy" = "strict-origin-when-cross-origin"
-"/*"."X-XSS-Protection" = "1; mode=block"
+command = "bun run build"
+publish = "dist"
