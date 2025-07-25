@@ -12,6 +12,32 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist",
     assetsDir: "assets",
+    // Enhanced security and obfuscation for production
+    minify: mode === 'production' ? 'terser' : false,
+    rollupOptions: {
+      output: {
+        // Obfuscate chunk names
+        chunkFileNames: mode === 'production' ? 'assets/[hash].js' : 'assets/[name]-[hash].js',
+        entryFileNames: mode === 'production' ? 'assets/[hash].js' : 'assets/[name]-[hash].js',
+        assetFileNames: mode === 'production' ? 'assets/[hash].[ext]' : 'assets/[name]-[hash].[ext]',
+        // Obfuscate variable names in production
+        manualChunks: undefined,
+      },
+    },
+    terserOptions: mode === 'production' ? {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+      mangle: {
+        // Obfuscate all identifiers
+        toplevel: true,
+        properties: false,
+      },
+      format: {
+        comments: false,
+      },
+    } : undefined,
   },
   plugins: [
     react(),

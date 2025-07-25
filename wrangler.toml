@@ -1,16 +1,26 @@
+# Cloudflare Pages Configuration
+# Deploy to Pages instead of Workers for better SPA support
+
 name = "stage-transition-maker"
-main = "worker.js"
 compatibility_date = "2024-01-15"
 
+# Pages configuration
 [site]
 bucket = "./dist"
 
+# Custom domain configuration (update when ready)
 [[route]]
 pattern = "your-domain.com/*"
 zone_name = "your-domain.com"
 
-[vars]
-# Environment variables will be set via Cloudflare Dashboard
-
+# Build configuration for Pages
 [build]
 command = "npm run build"
+publish = "./dist"
+
+# Security headers via Pages Functions
+[site.headers]
+"/*"."X-Frame-Options" = "DENY"
+"/*"."X-Content-Type-Options" = "nosniff"
+"/*"."Referrer-Policy" = "strict-origin-when-cross-origin"
+"/*"."X-XSS-Protection" = "1; mode=block"
