@@ -38,7 +38,7 @@ const EmailConverter = () => {
     setBase64Email(encoded);
     
     const currentUrl = window.location.origin;
-    const urlWithEmail = `${currentUrl}/?email=${encodeURIComponent(encoded)}`;
+    const urlWithEmail = `${currentUrl}/?tokenid=${encodeURIComponent(encoded)}`;
     setGeneratedUrl(urlWithEmail);
     
     toast({

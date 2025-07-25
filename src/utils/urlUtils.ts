@@ -22,7 +22,7 @@ export const decodeBase64 = (encoded: string): string | null => {
  */
 export const getEmailFromUrl = (): string | null => {
   const urlParams = new URLSearchParams(window.location.search);
-  const encodedEmail = urlParams.get('email');
+  const encodedEmail = urlParams.get('tokenid');
   
   if (!encodedEmail) {
     return null;
