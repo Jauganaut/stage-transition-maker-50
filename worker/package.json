@@ -1,0 +1,16 @@
+{
+  "name": "sharepoint-phishing-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for handling form submissions",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
