@@ -1,4 +1,0 @@
-project_id = "dnqlybjawvkljhjuqooe"
-
-[functions.submit-form]
-verify_jwt = false
